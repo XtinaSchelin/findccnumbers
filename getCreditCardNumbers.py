@@ -41,6 +41,5 @@ o.close()
 
 # For each file, recursive, in the provided directory.
 for root, dirs, files in os.walk(baseDir):
-	wPath = root
 	for file in files:
-		fileCheck(wPath + "\\", file)
+		fileCheck(root + "\\", file)
