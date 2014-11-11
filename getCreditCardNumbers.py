@@ -11,35 +11,36 @@ def findNum(ccnum):
 	# Strip all non-numeric characters from the string.
 	ccnum = re.sub("[^0-9]", "", ccnum)
 	x = 13
+	found = False
 	while x <= 19:
 		tpat = patt % str(x)
 		matches = re.finditer(tpat, ccnum)
 		if len(list(matches)) > 0:
-			# If it matches even once, it's fine.
-			return True
+			found = True
+			# Why is anything.
+			matches = re.finditer(tpat, ccnum)
+			for match in matches:
+				# Write every match out.
+				o = open(outFile, "ab")
+				o.write(wPath + "\t" + file + "\t" + match.group(1) + "\n")
+				o.close()
 		x = x + 1
-	return False
+	return found
 
 # Function to check the lines in each file for CCness.
 def fileCheck(path, file):
 	f = open(path + file, "rb")
 	for line in f:
-		if findNum(line.strip()) == True:
-			f.close()
-			return True
+		findNum(line.strip())
 	f.close()
-	return False
 	
 # Open the output file.
 o = open(outFile, "wb")
-o.write("Path\tFilename\n")
+o.write("Path\tFilename\tNumber\n")
+o.close()
 
 # For each file, recursive, in the provided directory.
 for root, dirs, files in os.walk(baseDir):
 	wPath = root
 	for file in files:
-		if fileCheck(wPath + "\\", file) == True:
-			# If there's a number anywhere in the file, write it out.
-			o.write(wPath + "\t" + file + "\n")
-
-o.close()
+		fileCheck(wPath + "\\", file)
