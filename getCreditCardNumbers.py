@@ -1,8 +1,9 @@
 import re, os, sys
 
-# Some hard-coded defaults.
+# Set the pattern up for later checking.
 patt = r'(?=(\d{%s}))'
 
+# Check the Luhn value for the provided card number.
 def luhn_checksum(card_number):
 	def digits_of(n):
 		return [int(d) for d in str(n)]
@@ -15,6 +16,7 @@ def luhn_checksum(card_number):
 		checksum += sum(digits_of(d*2))
 	return checksum % 10
 
+# Simple function to make life easier.
 def is_luhn_valid(card_number):
 	return luhn_checksum(card_number) == 0
 
@@ -50,6 +52,7 @@ def fileCheck(path, filename):
 # The main method, mainly.
 def scanFiles():
 	global outFile
+	
 	# Get to-scan directory.
 	print "What directory would you like to scan?"
 	scanDir = raw_input("> ").strip()
@@ -57,12 +60,12 @@ def scanFiles():
 		sys.exit("That is not a valid directory.")
 	
 	# Get output file.
-	print "Enter an output directory and .txt filename to export to."
+	print "Enter an output directory and filename to export to. (.txt, .csv, .tsv)"
 	outFile = raw_input("> ").strip()
-	# Directory exists?
+	# Does the directory for this file exist?
 	if os.path.isdir(os.path.dirname(outFile)) == False:
 		sys.exit("That directory doesn't even exist, come on.")
-	# File type is correct?
+	# Is the file type correct?
 	ext = os.path.splitext(outFile)[1].lower()
 	if ext not in (".txt", ".csv", ".tsv"):
 		sys.exit("Incorrect file type.")
@@ -72,7 +75,7 @@ def scanFiles():
 	o.write("Path\tFilename\tNumber\tLuhn\n")
 	o.close()
 
-	# For each file, recursive, in the provided directory.
+	# For each file, recursive, in the provided directory...
 	for root, dirs, files in os.walk(scanDir):
 		for file in files:
 			fileCheck(root + "\\", file)
